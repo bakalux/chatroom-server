@@ -17,13 +17,10 @@ app.use(function(req, res, next) {
 });
 
 io.on("connection", socket => {
-  console.log("user connected!");
+  console.log(socket.id);
 
-  socket.on("change color", color => {
-    // once we get a 'change color' event from one of our clients, we will send it to the rest of the clients
-    // we make use of the socket.emit method again with the argument given to use from the callback function above
-    console.log("color changed to: ", color);
-    io.sockets.emit("change color", color);
+  socket.on("SEND_MESSAGE", data => {
+    io.emit("RECIEVE_MESSAGE", data);
   });
 
   socket.on("disconnect", () => {
