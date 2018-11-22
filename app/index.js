@@ -23,6 +23,11 @@ io.on("connection", socket => {
     io.emit("RECIEVE_MESSAGE", data);
   });
 
+  socket.on("SEND_USERNAME", data => {
+    //dopisat'
+    io.emit("RECIEVE_USERNAME", data);
+  });
+
   socket.on("disconnect", () => {
     console.log("user disconnected");
 
