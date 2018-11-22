@@ -7,7 +7,8 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
-const usernames = [];
+let users = [];
+let usernames = [];
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -26,13 +27,25 @@ io.on("connection", socket => {
   });
 
   socket.on("SEND_USERNAME", data => {
-    usernames.push(data.username);
+    users.push({ username: data.username, id: socket.id });
+    usernames = users.map(user => {
+      return user.username;
+    });
     console.log(data.username);
-    io.emit("RECIEVE_USERNAMES", usernames);
+    io.emit("UPDATE_USERNAMES", usernames);
   });
 
   socket.on("disconnect", () => {
-    console.log("user disconnected");
+    idToRemove = socket.id;
+    console.log("id to remove ", idToRemove);
+    users = users.filter(user => {
+      return user.id !== idToRemove;
+    });
+    usernames = users.map(user => {
+      return user.username;
+    });
+    console.log(usernames);
+    io.emit("UPDATE_USERNAMES", usernames);
 
     // just like on the client side, we have a socket.on method that takes a callback function
   });
