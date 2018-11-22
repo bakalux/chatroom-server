@@ -7,6 +7,8 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
+const usernames = [];
+
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -24,8 +26,9 @@ io.on("connection", socket => {
   });
 
   socket.on("SEND_USERNAME", data => {
-    //dopisat'
-    io.emit("RECIEVE_USERNAME", data);
+    usernames.push(data.username);
+    console.log(data.username);
+    io.emit("RECIEVE_USERNAMES", usernames);
   });
 
   socket.on("disconnect", () => {
