@@ -9,6 +9,7 @@ const io = socketIO(server);
 
 let users = [];
 let usernames = [];
+let idCounter = 0;
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -23,6 +24,9 @@ io.on("connection", socket => {
   console.log(socket.id);
 
   socket.on("SEND_MESSAGE", data => {
+    const currentTime = new Date();
+    data.time = `${currentTime.getHours()}:${currentTime.getMinutes()}`;
+    data.id = idCounter++;
     io.emit("RECIEVE_MESSAGE", data);
   });
 
