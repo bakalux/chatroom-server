@@ -25,7 +25,11 @@ io.on("connection", socket => {
 
   socket.on("SEND_MESSAGE", data => {
     const currentTime = new Date();
-    data.time = `${currentTime.getHours()}:${currentTime.getMinutes()}`;
+    const currentMinutes =
+      currentTime.getMinutes() < 10
+        ? "0" + currentTime.getMinutes()
+        : currentTime.getMinutes();
+    data.time = `${currentTime.getHours()}:${currentMinutes}`;
     data.id = idCounter++;
     io.emit("RECIEVE_MESSAGE", data);
   });
