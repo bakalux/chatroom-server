@@ -7,8 +7,6 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
-let users = [];
-let usernames = [];
 let idCounter = 0;
 
 let chatrooms = {
