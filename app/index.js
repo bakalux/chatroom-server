@@ -11,6 +11,21 @@ let users = [];
 let usernames = [];
 let idCounter = 0;
 
+let chatrooms = {
+  lobby: {
+    users: [],
+    messages: []
+  },
+  pomoika: {
+    users: [],
+    messages: []
+  },
+  doka: {
+    users: [],
+    messages: []
+  }
+};
+
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -24,6 +39,7 @@ io.on("connection", socket => {
   console.log(socket.id);
 
   socket.on("SEND_MESSAGE", data => {
+    console.log(data);
     const currentTime = new Date();
     const currentMinutes =
       currentTime.getMinutes() < 10
