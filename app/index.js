@@ -16,11 +16,11 @@ let chatrooms = {
     users: [],
     messages: []
   },
-  pomoika: {
+  series: {
     users: [],
     messages: []
   },
-  doka: {
+  games: {
     users: [],
     messages: []
   }
