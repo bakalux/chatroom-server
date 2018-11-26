@@ -36,6 +36,7 @@ app.use(function(req, res, next) {
 io.on("connection", socket => {
   console.log(socket.id);
 
+  /** Getting message, processsing date and sending it to the client */
   socket.on("SEND_MESSAGE", data => {
     console.log(data);
     const currentTime = new Date();
@@ -48,6 +49,8 @@ io.on("connection", socket => {
     io.emit("RECIEVE_MESSAGE", data);
   });
 
+  /** Getting username,  pushing it the right room,
+   *  and giving updated users and the right room to the client*/
   socket.on("SEND_USERNAME", data => {
     chatrooms[data.name].users.push(data.user);
     const usersAndNewRoom = {
@@ -57,8 +60,12 @@ io.on("connection", socket => {
     io.emit("UPDATE_USERNAMES", usersAndNewRoom);
   });
 
+  /**While changing room, removing user from the old room and moving him to the new one
+   * and giving updated users to the client
+   */
   socket.on("CHANGE_ROOM", data => {
     console.log("change room data is ", data);
+    // new room to add user
     chatrooms[data.newRoom].users.push(data.user);
     const usersAndNewRoom = {
       name: data.newRoom,
@@ -67,6 +74,7 @@ io.on("connection", socket => {
     console.log(usersAndNewRoom);
     io.emit("UPDATE_USERNAMES", usersAndNewRoom);
 
+    //old room to remove user
     chatrooms[data.oldRoom].users = chatrooms[data.oldRoom].users.filter(
       user => {
         return user.id !== data.user.id;
@@ -81,10 +89,12 @@ io.on("connection", socket => {
     io.emit("UPDATE_USERNAMES", usersAndOldRoom);
   });
 
+  /**Removing user on disconnect from all rooms */
   socket.on("disconnect", () => {
     idToRemove = socket.id;
     console.log("id to remove ", idToRemove);
     for (name in chatrooms) {
+      //checking every room for disconnected user
       chatrooms[name].users = chatrooms[name].users.filter(user => {
         return user.id !== idToRemove;
       });
@@ -95,7 +105,6 @@ io.on("connection", socket => {
       };
       io.emit("UPDATE_USERNAMES", usersAndRoom);
     }
-    // just like on the client side, we have a socket.on method that takes a callback function
   });
 });
 
