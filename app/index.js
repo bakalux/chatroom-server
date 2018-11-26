@@ -51,12 +51,36 @@ io.on("connection", socket => {
   });
 
   socket.on("SEND_USERNAME", data => {
-    users.push({ username: data.username, id: socket.id });
-    usernames = users.map(user => {
-      return user.username;
-    });
-    console.log(data.username);
-    io.emit("UPDATE_USERNAMES", usernames);
+    chatrooms[data.name].users.push(data.user);
+    const usersAndNewRoom = {
+      users: chatrooms[data.name].users,
+      name: data.name
+    };
+    io.emit("UPDATE_USERNAMES", usersAndNewRoom);
+  });
+
+  socket.on("CHANGE_ROOM", data => {
+    console.log("change room data is ", data);
+    chatrooms[data.newRoom].users.push(data.user);
+    const usersAndNewRoom = {
+      name: data.newRoom,
+      users: chatrooms[data.newRoom].users
+    };
+    console.log(usersAndNewRoom);
+    io.emit("UPDATE_USERNAMES", usersAndNewRoom);
+
+    chatrooms[data.oldRoom].users = chatrooms[data.oldRoom].users.filter(
+      user => {
+        return user.id !== data.user.id;
+      }
+    );
+
+    const usersAndOldRoom = {
+      name: data.oldRoom,
+      users: chatrooms[data.oldRoom].users
+    };
+
+    io.emit("UPDATE_USERNAMES", usersAndOldRoom);
   });
 
   socket.on("disconnect", () => {
