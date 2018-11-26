@@ -86,15 +86,17 @@ io.on("connection", socket => {
   socket.on("disconnect", () => {
     idToRemove = socket.id;
     console.log("id to remove ", idToRemove);
-    users = users.filter(user => {
-      return user.id !== idToRemove;
-    });
-    usernames = users.map(user => {
-      return user.username;
-    });
-    console.log(usernames);
-    io.emit("UPDATE_USERNAMES", usernames);
-
+    for (name in chatrooms) {
+      chatrooms[name].users = chatrooms[name].users.filter(user => {
+        return user.id !== idToRemove;
+      });
+      console.log(chatrooms[name].users);
+      const usersAndRoom = {
+        users: chatrooms[name].users,
+        name: name
+      };
+      io.emit("UPDATE_USERNAMES", usersAndRoom);
+    }
     // just like on the client side, we have a socket.on method that takes a callback function
   });
 });
